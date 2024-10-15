@@ -15,9 +15,12 @@ function connectPdo()
 function createTodoData($todoText)
 {
     $dbh = connectPdo();
-    $sql = 'INSERT INTO todos (content) VALUES ("' . $todoText . '")';
-    $dbh->query($sql);
+    $sql = 'INSERT INTO todos (content) VALUES (:todoText)';
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindValue(':todoText', $todoText, PDO::PARAM_STR);
+    $stmt->execute();
 }
+
 
 function getAllRecords()
 {
@@ -26,29 +29,36 @@ function getAllRecords()
     return $dbh->query($sql)->fetchAll();
 }
 
-function updatedTodoData($post)
+function updateTodoData($post)
 {
     $dbh = connectPdo();
-    $sql = 'UPDATE todos SET content = "' . $post['content'] . '" WHERE id = ' . $post['id'];
-    $dbh->query($sql);
-
+    $sql = 'UPDATE todos SET content = :todoText WHERE id = :id';
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindValue(':todoText', $post['content'], PDO::PARAM_STR);
+    $stmt->bindValue(':id', (int) $post['id'], PDO::PARAM_INT);
+    $stmt->execute();
 }
 
-function getTodoTextById($id)
-{
+
+
+function getTodoTextById($id) {
     $dbh = connectPdo();
-    $sql = "SELECT * FROM todos WHERE deleted_at IS NULL AND id = $id";
-    // var_dump($sql);
-    // exit();
-    $data = $dbh->query($sql)->fetch();
+    $sql = "SELECT * FROM todos WHERE deleted_at IS NULL AND id = :id";
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    $data = $stmt->fetch();
     return $data['content'];
 }
 
 function deleteTodoData($id) {
     $dbh = connectPdo();
     $now = date('Y-m-d H:i:s');
-    $sql = 'UPDATE todos SET deleted_at = "' . $now . '" WHERE id = ' . $id;
-    $dbh->query($sql);
+    $sql = 'UPDATE todos SET deleted_at = :now WHERE id = :id';
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindParam(':now', $now);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 }
 
 
