@@ -17,25 +17,25 @@ function getSelectedTodo($id)
 }
 
 
-function savePostedData($post)
-{
-    checkToken($post['token']);
-    validate($post);
-    $path = getRefererPath();
-    switch ($path) {
-        case '/new.php':
-            createTodoData($post['content']);
-            break;
-        case '/edit.php':
-            updateTodoData($post);
-            break;
-        case '/index.php':
-            deleteTodoData($post['id']);
-            break;
-        default:
-            break;
+    function savePostedData($post)
+    {
+        checkToken($post['token']);
+        validate($post);
+        $path = getRefererPath();
+        switch ($path) {
+            case '/new.php':
+                createTodoData($post['content']);
+                break;
+            case '/edit.php':
+                updateTodoData($post);
+                break;
+            case '/index.php':
+                deleteTodoData($post['id']);
+                break;
+            default:
+                break;
+        }
     }
-}
 
 function validate($post)
 {
@@ -65,8 +65,6 @@ function checkToken($token)
 {
     if (empty($_SESSION['token']) || ($_SESSION['token'] !== $token)) {
         $_SESSION['err'] = '不正な操作です';
-        var_dump($_SESSION['err']);
-        exit();
         redirectToPostedPage();
     }
 }
@@ -79,5 +77,6 @@ function unsetError()
 function redirectToPostedPage()
 {
     header('Location: ' . $_SERVER['HTTP_REFERER']);
+    //  現在のページに遷移する前のページを参照している
     exit();
 }
