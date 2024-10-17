@@ -17,6 +17,7 @@ function getSelectedTodo($id)
 }
 
 
+
     function savePostedData($post)
     {
         checkToken($post['token']);
@@ -80,3 +81,4 @@ function redirectToPostedPage()
     //  現在のページに遷移する前のページを参照している
     exit();
 }
+
